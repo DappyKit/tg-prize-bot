@@ -6,10 +6,10 @@ async function main() {
   console.log('Deploying contracts with the account:', deployer.address)
 
   // deploy Prize
-  console.log('Deploying Prize...')
-  const socialConnections = await ethers.deployContract('Prize', [7, 10])
-  await socialConnections.waitForDeployment()
-  console.log(`Prize deployed to ${socialConnections.target}`)
+  console.log('Deploying Game...')
+  const gameContract = await ethers.deployContract('Game')
+  await gameContract.waitForDeployment()
+  console.log(`Game deployed to ${gameContract.target}`)
 }
 
 main().catch((error) => {
