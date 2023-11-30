@@ -1,31 +1,39 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
+/**
+ * @title A betting game contract
+ */
 contract Game {
+    // Represents a single game's data
     struct GameData {
-        address creator;
-        bytes32 secretHash;
-        uint256 creationTime;
-        uint256 betAmount;
-        address opponent;
-        uint8 opponentBet;
-        bool ended;
+        address creator; // The address of the game creator
+        bytes32 secretHash; // Hash of the game secret (gameId, betValue, secret)
+        uint256 creationTime; // Timestamp when the game was created
+        uint256 betAmount; // The amount of ether bet in the game
+        address opponent; // The address of the opponent in the game
+        uint8 opponentBet; // The bet value placed by the opponent
+        bool ended; // Flag indicating if the game has ended
     }
 
-    uint256 public feePercentage;
-    uint256 public revealSeconds;
-    uint256 public returnSeconds;
-    mapping(uint256 => GameData) public games;
+    uint256 public feePercentage; // Percentage of the bet that is taken as a fee
+    uint256 public revealSeconds; // Time period in seconds for the game creator to reveal the game
+    uint256 public returnSeconds; // Time period in seconds after which the creator can return the stake if no opponent joins
+    mapping(uint256 => GameData) public games; // Mapping from gameId to GameData
 
+    // Event emitted when a game is created
     event GameCreated(uint256 indexed gameId, address indexed creator);
+    // Event emitted when a game ends
     event GameEnded(uint256 indexed gameId, address indexed winner);
 
+    // Contract constructor
     constructor(uint256 _feePercentage, uint256 _revealSeconds, uint256 _returnSeconds) {
         feePercentage = _feePercentage;
         revealSeconds = _revealSeconds;
         returnSeconds = _returnSeconds;
     }
 
+    // Creates a new game
     function create(uint256 gameId, bytes32 secret) external payable {
         require(msg.value > 0, "Bet amount must be greater than 0");
         require(games[gameId].creator == address(0), "Game already exists");
@@ -36,6 +44,7 @@ contract Game {
         emit GameCreated(gameId, msg.sender);
     }
 
+    // Places a bet in an existing game
     function bet(uint256 gameId, uint8 betValue) external payable {
         require(betValue >= 1 && betValue <= 3, "Bet must be between 1 and 3");
         GameData storage game = games[gameId];
@@ -50,6 +59,7 @@ contract Game {
         game.opponentBet = betValue;
     }
 
+    // Reveals the game, determines the winner, and transfers the bet amount
     function reveal(uint256 gameId, uint8 betValue, bytes32 secret) external {
         GameData storage game = games[gameId];
         require(game.creator == msg.sender, "Only creator can reveal");
@@ -75,6 +85,7 @@ contract Game {
         emit GameEnded(gameId, winner);
     }
 
+    // Allows the game creator to return the stake if no opponent joins
     function returnStack(uint256 gameId) external {
         GameData storage game = games[gameId];
         require(game.creator == msg.sender, "Only creator can return stack");
@@ -86,10 +97,12 @@ contract Game {
         payable(msg.sender).transfer(totalAmount);
     }
 
+    // Calculates the fee based on the bet amount
     function calculateFee(uint256 amount) internal view returns (uint256) {
         return amount * feePercentage / 100;
     }
 
+    // Determines the winner of the game
     function determineWinner(address creator, address opponent, uint8 creatorBet, uint8 opponentBet) internal pure returns (address) {
         if ((creatorBet == 1 && opponentBet == 2) ||
         (creatorBet == 2 && opponentBet == 3) ||
