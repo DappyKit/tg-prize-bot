@@ -18,8 +18,6 @@ describe('Game', function () {
 
   describe('create', function () {
     it('should allow a user to create a game', async function () {
-      ethers.AbiCoder.defaultAbiCoder().encode([], [])
-
       const {game, owner} = await loadFixture(deployGameFixture)
       const gameId = ethers.id('game1')
       const secretHash = ethers.keccak256(ethers.toUtf8Bytes('secret'))
