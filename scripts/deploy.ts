@@ -5,9 +5,9 @@ async function main() {
   const [deployer] = await ethers.getSigners()
   console.log('Deploying contracts with the account:', deployer.address)
 
-  // deploy Prize
+  // deploy Game
   console.log('Deploying Game...')
-  const gameContract = await ethers.deployContract('Game')
+  const gameContract = await ethers.deployContract('Game', [5, 1800, 3600])
   await gameContract.waitForDeployment()
   console.log(`Game deployed to ${gameContract.target}`)
 }

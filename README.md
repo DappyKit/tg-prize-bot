@@ -5,9 +5,9 @@
 
 ## Deployed contracts
 
-Network: [Optimism Sepolia](https://sepolia-optimism.etherscan.io/)
+Network: [Ethereum Sepolia](https://sepolia.etherscan.io/)
 
-- `Game.sol`: [xxx](https://sepolia-optimism.etherscan.io/address/xxx)
+- `Game.sol`: [0x5fBB70702d4C96B40C6bCa75CaBe50E5c8A07599](https://sepolia.etherscan.io/address/0x5fBB70702d4C96B40C6bCa75CaBe50E5c8A07599)
 
 ## Deploy contracts
 
